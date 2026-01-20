@@ -26,6 +26,10 @@ enum AppError {
 type Result<T> = std::result::Result<T, AppError>;
 type CommandResult<T> = std::result::Result<T, String>;
 
+fn into_command_result<T>(result: Result<T>) -> CommandResult<T> {
+    result.map_err(|err| err.to_string())
+}
+
 #[derive(Clone)]
 struct AppState {
     db_path: PathBuf,
@@ -312,8 +316,8 @@ async fn initialize_app(
             std::fs::create_dir_all(parent).map_err(|err| err.to_string())?;
         }
     }
-    let conn = open_connection(&state.db_path).map_err(|err| err.to_string())?;
-    apply_migrations(&conn).map_err(|err| err.to_string())?;
+    let conn = into_command_result(open_connection(&state.db_path))?;
+    into_command_result(apply_migrations(&conn))?;
     let count: i64 = conn
         .query_row("SELECT COUNT(*) FROM documents", [], |row| row.get(0))
         .map_err(|err| err.to_string())?;
@@ -340,7 +344,7 @@ async fn update_from_sources(
 #[tauri::command]
 fn list_documents(state: State<'_, Mutex<AppState>>) -> CommandResult<Vec<DocumentSummary>> {
     let state = state.lock().expect("state lock");
-    let conn = open_connection(&state.db_path).map_err(|err| err.to_string())?;
+    let conn = into_command_result(open_connection(&state.db_path))?;
     let mut stmt = conn.prepare(
         "SELECT id, title, url, updated_at FROM documents ORDER BY updated_at DESC",
     ).map_err(|err| err.to_string())?;
@@ -365,7 +369,7 @@ fn search_articles(
     query: String,
 ) -> CommandResult<Vec<ArticleSummary>> {
     let state = state.lock().expect("state lock");
-    let conn = open_connection(&state.db_path).map_err(|err| err.to_string())?;
+    let conn = into_command_result(open_connection(&state.db_path))?;
     let mut stmt = conn.prepare(
         "
         SELECT articles.id, articles.number, articles.title,
@@ -401,7 +405,7 @@ fn search_by_number(
     number: String,
 ) -> CommandResult<Vec<ArticleSummary>> {
     let state = state.lock().expect("state lock");
-    let conn = open_connection(&state.db_path).map_err(|err| err.to_string())?;
+    let conn = into_command_result(open_connection(&state.db_path))?;
     let mut stmt = conn.prepare(
         "
         SELECT articles.id, articles.number, articles.title,
@@ -433,7 +437,7 @@ fn search_by_number(
 #[tauri::command]
 fn get_article(state: State<'_, Mutex<AppState>>, article_id: i64) -> CommandResult<ArticleDetail> {
     let state = state.lock().expect("state lock");
-    let conn = open_connection(&state.db_path).map_err(|err| err.to_string())?;
+    let conn = into_command_result(open_connection(&state.db_path))?;
     conn.query_row(
         "
         SELECT articles.id, articles.number, articles.title, articles.body, documents.title
@@ -458,7 +462,7 @@ fn get_article(state: State<'_, Mutex<AppState>>, article_id: i64) -> CommandRes
 #[tauri::command]
 fn search_memos(state: State<'_, Mutex<AppState>>, query: String) -> CommandResult<Vec<MemoSummary>> {
     let state = state.lock().expect("state lock");
-    let conn = open_connection(&state.db_path).map_err(|err| err.to_string())?;
+    let conn = into_command_result(open_connection(&state.db_path))?;
     let mut stmt = conn.prepare(
         "
         SELECT memos.id, memos.title,
