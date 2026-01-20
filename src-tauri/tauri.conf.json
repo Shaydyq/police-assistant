@@ -22,7 +22,7 @@
     ],
     "bundle": {
       "active": true,
-      "targets": ["msi", "exe"],
+      "targets": ["msi", "nsis"],
       "identifier": "com.majestic.lawassistant",
       "icon": ["icons/icon.ico", "icons/icon.png"],
       "resources": []
