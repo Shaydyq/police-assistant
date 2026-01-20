@@ -58,6 +58,19 @@ npm run tauri dev
 `beforeDevCommand` в Tauri вызывает `npm run dev`, а он требует установленный `vite`
 из `node_modules`, поэтому без `npm install` команда завершится ошибкой.
 
+### Если ошибка: `link.exe not found` (MSVC linker)
+
+Это означает, что **не установлены Microsoft C++ Build Tools (MSVC)** или их не видно в PATH.
+Tauri на Windows требует именно MSVC‑линкер, одного VS Code недостаточно.
+
+Что сделать:
+1. Установить **Build Tools for Visual Studio** и выбрать компонент **Desktop development with C++**
+   (он включает `link.exe`).
+2. Перезапустить терминал и снова выполнить:
+   ```bash
+   npm run tauri dev
+   ```
+
 ## Сборка установщика .exe
 
 ```bash
