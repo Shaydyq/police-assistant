@@ -71,6 +71,19 @@ Tauri на Windows требует именно MSVC‑линкер, одного
    npm run tauri dev
    ```
 
+### Если ошибка: `icons/icon.ico not found` (tauri-build)
+
+Tauri требует иконки, указанные в `src-tauri/tauri.conf.json`:
+```json
+"icon": ["icons/icon.ico", "icons/icon.png"]
+```
+Если файлов нет, сборка падает. Проверьте, что в папке
+`src-tauri/icons/` действительно есть `icon.ico` и `icon.png`.
+При необходимости создайте/замените их и повторите сборку:
+```bash
+npm run tauri dev
+```
+
 ## Сборка установщика .exe
 
 ```bash
