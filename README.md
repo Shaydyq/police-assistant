@@ -11,6 +11,25 @@
 - Поиск по словам и по номеру статьи.
 - Ассистент формирует ответ с обязательными источниками.
 
+## Требования
+
+- **Node.js LTS** (npm входит в комплект).
+- **Rust toolchain (cargo)** — обязателен для Tauri.
+- **Microsoft C++ Build Tools** (MSVC) для сборки на Windows.
+- **WebView2 Runtime** (обычно уже установлен, иначе поставить вручную).
+
+Если при запуске появляется ошибка `failed to get cargo metadata: program not found`,
+это значит, что **Rust (cargo) не установлен или не в PATH**.
+
+### Установка Rust (cargo)
+
+Скачайте и установите Rust через rustup: https://www.rust-lang.org/tools/install  
+После установки перезапустите терминал и проверьте:
+
+```bash
+cargo --version
+```
+
 ## Быстрый старт
 
 ```bash
